@@ -34,6 +34,12 @@ class _SendMessageScreenState extends State<SendMessageScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const ListTile(
+                      title: Text('Title'),
+                      subtitle: Text('Subitile'),
+                      leading: Icon(Icons.person),
+                      trailing: Icon(Icons.arrow_right_sharp),
+                    ),
                     const SizedBox(height: 20),
                     Text("sendingTo == ${sendMessageController.sendingTo}"),
                     const SizedBox(height: 20),
