@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:whatsappmarketingapp/controllers/send_message_controller.dart';
 
+import 'view_all_contects.dart';
+
 class SendMessageScreen extends StatefulWidget {
   const SendMessageScreen({Key? key}) : super(key: key);
 
@@ -34,11 +36,14 @@ class _SendMessageScreenState extends State<SendMessageScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const ListTile(
-                      title: Text('Title'),
-                      subtitle: Text('Subitile'),
-                      leading: Icon(Icons.person),
-                      trailing: Icon(Icons.arrow_right_sharp),
+                    ListTile(
+                      onTap: () {
+                        Get.to(() => const ViewAllContacts());
+                      },
+                      title: const Text('Title'),
+                      subtitle: const Text('Subitile'),
+                      leading: const Icon(Icons.person),
+                      trailing: const Icon(Icons.arrow_right_sharp),
                     ),
                     const SizedBox(height: 20),
                     Text("sendingTo == ${sendMessageController.sendingTo}"),

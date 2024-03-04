@@ -1,16 +1,29 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:contacts_service/contacts_service.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
 
 class SendMessageController extends GetxController {
   RxBool isLoading = false.obs;
-  List<String> allContacts = [
+  RxBool isAllSelected = false.obs;
+  List<String> selectedContacts = [];
+
+  ///
+  List<String> allPhoneNumbers = [
     "923036991118",
     "923106778026",
   ];
+
+  List<Contact> allContacts = [];
+
+  @override
+  void onInit() {
+    super.onInit();
+    getPermission();
+  }
 
   String sendingTo = "";
   RxBool stopLoop = false.obs;
@@ -18,7 +31,7 @@ class SendMessageController extends GetxController {
   void getPermission() async {
     var status = await Permission.contacts.request();
     if (status.isGranted) {
-      // fetchContacts();
+      fetchContacts();
     } else if (status.isDenied) {
     } else if (status.isPermanentlyDenied) {
       openAppSettings();
@@ -30,14 +43,14 @@ class SendMessageController extends GetxController {
     if (!stopLoop.value) {
       stopLoop.value = true;
 
-      for (int i = 0; i < allContacts.length; i++) {
+      for (int i = 0; i < allPhoneNumbers.length; i++) {
         await Future.delayed(const Duration(seconds: 5));
 
         if (stopLoop.value) {
-          log("message to == ${[allContacts[i]]}");
-          sendingTo = allContacts[i];
-          sendMessage(phoneNumber: [allContacts[i]]);
-          if (i == allContacts.length - 1) {
+          log("message to == ${[allPhoneNumbers[i]]}");
+          sendingTo = allPhoneNumbers[i];
+          sendMessage(phoneNumber: [allPhoneNumbers[i]]);
+          if (i == allPhoneNumbers.length - 1) {
             stopTheLoop();
             log("stop loop because reached the last contact");
             update();
@@ -56,34 +69,29 @@ class SendMessageController extends GetxController {
     isLoading.value = false;
   }
 
-  // Future<void> fetchContacts() async {
-  //   allContacts.clear(); // Clear the list before populating it again
-  //   Iterable<Contact> contacts = await ContactsService.getContacts();
-  //   for (var contact in contacts) {
-  //     for (var phone in contact.phones ?? []) {
-  //       // Use the null-aware operator to avoid null checks
-  //       if (phone.value != null && phone.value!.isNotEmpty) {
-  //         String cleanedPhone = phone.value!;
-  //         // Remove spaces
-  //         cleanedPhone = cleanedPhone.replaceAll(' ', '');
-  //         // Remove leading '+' if present
-  //         if (cleanedPhone.startsWith('+')) {
-  //           cleanedPhone = cleanedPhone.substring(1); // Remove '+'
-  //         }
-  //         // Remove leading '0' and prepend '92' if necessary
-  //         if (cleanedPhone.startsWith('0')) {
-  //           cleanedPhone =
-  //               '92${cleanedPhone.substring(1)}'; // Remove '0' and prepend '92'
-  //         }
-  //         // Check length before adding to list
-  //         if (cleanedPhone.length == 12) {
-  //           allContacts.add(cleanedPhone);
-  //           print('Phone: $cleanedPhone');
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
+  Future<void> fetchContacts() async {
+    allPhoneNumbers.clear();
+    allContacts = await ContactsService.getContacts();
+
+    for (var contact in allContacts) {
+      for (var phone in contact.phones ?? []) {
+        if (phone.value != null && phone.value!.isNotEmpty) {
+          String cleanedPhone = phone.value!;
+          cleanedPhone = cleanedPhone.replaceAll(' ', '');
+          if (cleanedPhone.startsWith('+')) {
+            cleanedPhone = cleanedPhone.substring(1);
+          }
+          if (cleanedPhone.startsWith('0')) {
+            cleanedPhone = '92${cleanedPhone.substring(1)}';
+          }
+
+          if (cleanedPhone.length == 12) {
+            allPhoneNumbers.add(cleanedPhone);
+          }
+        }
+      }
+    }
+  }
 
   ///
   ///
@@ -105,14 +113,11 @@ class SendMessageController extends GetxController {
 
       if (response.statusCode == 200) {
         print('Message sent successfully');
-        // Handle success
       } else {
         print('Failed to send message. Status code: ${response.statusCode}');
-        // Handle failure
       }
     } catch (error) {
       print('Error sending message: $error');
-      // Handle failure
     }
   }
 }
