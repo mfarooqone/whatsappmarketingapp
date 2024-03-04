@@ -19,9 +19,7 @@ class _ViewAllContactsState extends State<ViewAllContacts> {
       return Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: const Text(
-            "All Contacts",
-          ),
+          title: const Text("All Contacts"),
           actions: [
             IconButton(
               icon: Text(sendMessageController.isAllSelected.value
@@ -69,7 +67,7 @@ class _ViewAllContactsState extends State<ViewAllContacts> {
                       trailing: Checkbox(
                         value: sendMessageController.selectedContacts.contains(
                             contact.phones != null && contact.phones!.isNotEmpty
-                                ? contact.phones?.first.value
+                                ? contact.phones!.first.value
                                 : false),
                         onChanged: (bool? newValue) {
                           if (newValue != null) {
@@ -93,6 +91,22 @@ class _ViewAllContactsState extends State<ViewAllContacts> {
                           sendMessageController.isLoading.value = false;
                         },
                       ),
+                      onTap: () {
+                        final phoneValue =
+                            contact.phones != null && contact.phones!.isNotEmpty
+                                ? contact.phones!.first.value
+                                : "";
+                        if (sendMessageController.selectedContacts
+                            .contains(phoneValue)) {
+                          sendMessageController.selectedContacts
+                              .remove(phoneValue);
+                        } else {
+                          sendMessageController.selectedContacts
+                              .add(phoneValue ?? "");
+                        }
+                        sendMessageController.isLoading.value = true;
+                        sendMessageController.isLoading.value = false;
+                      },
                     );
                   },
                 ),
