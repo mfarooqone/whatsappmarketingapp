@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get/get.dart';
+import 'package:whatsappmarketingapp/screens/send_message.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -12,7 +14,18 @@ class _SplashScreenState extends State<SplashScreen> {
   bool splashLoading = true;
   @override
   void initState() {
+    updateLoading();
     super.initState();
+  }
+
+  void updateLoading() {
+    Future.delayed(const Duration(seconds: 1), () {
+      if (mounted) {
+        setState(() {
+          splashLoading = false;
+        });
+      }
+    });
   }
 
   @override
@@ -53,44 +66,11 @@ class _SplashScreenState extends State<SplashScreen> {
                           color: Colors.red,
                         ),
                       )
-                    : Container(
-                        width: 120,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              // AppColors.themeLightColor,
-                              // AppColors.themeDarkColor,
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                        child: const Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Continue",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 2,
-                              ),
-                              Icon(
-                                Icons.arrow_forward,
-                                size: 12,
-                                color: Colors.white,
-                              ),
-                            ],
-                          ),
-                        ),
+                    : ElevatedButton(
+                        onPressed: () {
+                          Get.offAll(() => const SendMessageScreen());
+                        },
+                        child: const Text("Continue"),
                       ),
               ),
             ),
