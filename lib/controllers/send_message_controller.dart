@@ -39,7 +39,7 @@ class SendMessageController extends GetxController {
     }
   }
 
-  Future<void> startLoop() async {
+  Future<void> startLoop({required String message}) async {
     // Set<String> uniquePhoneNumbers = <String>{};
     // allPhoneNumbers.clear();
     // uniquePhoneNumbers.clear();
@@ -75,9 +75,19 @@ class SendMessageController extends GetxController {
         await Future.delayed(const Duration(seconds: 5));
 
         if (stopLoop.value) {
+          ///
           log("message to == ${[allPhoneNumbers[i]]}");
+
+          ///
           sendingTo = allPhoneNumbers[i];
-          sendMessage(phoneNumber: [allPhoneNumbers[i]]);
+
+          ///
+          sendMessage(
+            phoneNumber: [allPhoneNumbers[i]],
+            message: message,
+          );
+
+          ///
           if (i == allPhoneNumbers.length - 1) {
             stopTheLoop();
             log("stop loop because reached the last contact");
@@ -107,7 +117,10 @@ class SendMessageController extends GetxController {
   ///
   ///
   ///
-  Future<void> sendMessage({required List<String> phoneNumber}) async {
+  Future<void> sendMessage({
+    required List<String> phoneNumber,
+    required String message,
+  }) async {
     final url = Uri.parse('http://66.42.49.235/send-message');
     final headers = {'Content-Type': 'application/json'};
 
@@ -117,8 +130,7 @@ class SendMessageController extends GetxController {
         headers: headers,
         body: jsonEncode({
           'phoneNumbers': phoneNumber,
-          'message':
-              "Whoever believes in Allah and the Last Day should speak a good word or remain silent. - Sahih Al-Bukhari"
+          'message': message,
         }),
       );
 

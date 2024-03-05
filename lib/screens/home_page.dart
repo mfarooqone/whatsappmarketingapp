@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:whatsappmarketingapp/controllers/send_message_controller.dart';
 import 'package:whatsappmarketingapp/widgets/loader_indicator.dart';
 import 'package:whatsappmarketingapp/widgets/primary_text_field.dart';
+import 'package:whatsappmarketingapp/widgets/show_messages.dart';
 
 import 'view_all_contacts.dart';
 
@@ -36,66 +37,95 @@ class _HomePageState extends State<HomePage> {
             ? const Center(
                 child: LoaderIndicator(),
               )
-            : Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ListTile(
-                      onTap: () {
-                        Get.to(() => const ViewAllContacts());
-                      },
-                      title: Text(
-                        sendMessageController.selectedContacts.isNotEmpty
-                            ? "Selected Contacts: ${sendMessageController.selectedContacts.length}"
-                            : 'Select Contacts',
+            : SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      ListTile(
+                        onTap: () {
+                          Get.to(() => const ViewAllContacts());
+                        },
+                        title: Text(
+                          sendMessageController.selectedContacts.isNotEmpty
+                              ? "Selected Contacts: ${sendMessageController.selectedContacts.length}"
+                              : 'Select Contacts',
+                        ),
+                        tileColor: Colors.grey[100],
+                        leading: const Icon(Icons.person),
+                        trailing: const Icon(Icons.arrow_right_sharp),
                       ),
-                      tileColor: Colors.grey[100],
-                      leading: const Icon(Icons.person),
-                      trailing: const Icon(Icons.arrow_right_sharp),
-                    ),
-                    const SizedBox(height: 20),
+                      const SizedBox(height: 20),
 
-                    ////
-                    ///
-                    ///
-                    PrimaryTextField(
-                      controller: textController,
-                      label: "Message",
-                      hintText: "Write a message here",
-                      mandatory: true,
-                      keyboardType: TextInputType.multiline,
-                      maxLines: 10,
-                    ),
-
-                    ///
-                    ///
-                    ///
-                    Text("sendingTo == ${sendMessageController.sendingTo}"),
-                    const SizedBox(height: 20),
-
-                    ///
-                    ///
-                    ///
-
-                    ElevatedButton(
-                      onPressed: () {
-                        if (sendMessageController.stopLoop.value == false) {
-                          sendMessageController.startLoop();
-                        } else {
-                          sendMessageController.stopTheLoop();
-                        }
-                      },
-                      child: Text(
-                        sendMessageController.stopLoop.value
-                            ? 'Stop'
-                            : 'Send Message',
+                      ////
+                      ///
+                      ///
+                      PrimaryTextField(
+                        controller: textController,
+                        label: "Message",
+                        hintText: "Write a message here",
+                        mandatory: true,
+                        maxLines: 6,
+                        inputAction: TextInputAction.newline,
+                        keyboardType: TextInputType.multiline,
                       ),
-                    ),
-                  ],
+
+                      ///
+                      ///
+                      ///
+                      if (sendMessageController.stopLoop.value)
+                        Text("Sending To: ${sendMessageController.sendingTo}"),
+
+                      ///
+                      ///
+                      ///
+                      const SizedBox(height: 10),
+
+                      ///
+                      ///
+                      ///
+
+                      ElevatedButton(
+                        onPressed: () {
+                          FocusScope.of(context).unfocus();
+
+                          if (validate()) {
+                            if (sendMessageController.stopLoop.value == false) {
+                              sendMessageController.startLoop(
+                                  message: textController.text);
+                            } else {
+                              sendMessageController.stopTheLoop();
+                            }
+                          }
+                        },
+                        child: Text(
+                          sendMessageController.stopLoop.value
+                              ? 'Stop'
+                              : 'Send Message',
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
       }),
     );
+  }
+
+  ///
+  ///
+  ///
+  bool validate() {
+    if (sendMessageController.allPhoneNumbers.isEmpty) {
+      showErrorMessage(context, "Please select atleast one contact");
+      return false;
+    } else if (textController.text.isEmpty) {
+      showErrorMessage(context, "Please write a message");
+
+      return false;
+    } else {
+      return true;
+    }
   }
 }

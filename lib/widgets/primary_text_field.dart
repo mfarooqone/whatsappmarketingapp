@@ -121,46 +121,41 @@ class PrimaryTextField extends StatelessWidget {
                   ),
                 )
               : SizedBox(),
-          Container(
-            decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.grey[300]!,
-                ),
-                borderRadius: BorderRadius.circular(10)),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: TextField(
-                onTap: onTap,
-                obscureText: obscureText,
-                textAlignVertical: TextAlignVertical.center,
-                enabled: enable,
-                style: appTheme.textTheme.bodyMedium?.copyWith(
-                  color: enable
-                      ? appTheme.iconTheme.color
-                      : appTheme.colorScheme.primaryContainer,
-                ),
-                onChanged: onChanged,
-                controller: controller,
-                maxLength: maxLength,
-                textCapitalization: textCapitalization,
-                textAlign: textAlignHorizontal,
-                keyboardType: keyboardType,
-                textInputAction: inputAction,
-                onSubmitted: onSubmitted,
-                autofocus: autoFocus,
-                decoration: InputDecoration(
-                  hintText: hintText,
-                  hintStyle: appTheme.textTheme.bodySmall,
-                  prefixIcon: prefixIcon,
-                  suffixIcon: suffixIcon,
-                  border: InputBorder.none,
-                  suffixIconConstraints:
-                      BoxConstraints(maxWidth: 80, maxHeight: 50),
-                ),
-                maxLines: maxLines,
-                focusNode: focusNode,
-                inputFormatters: textInputFormatter,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: TextField(
+              onTap: onTap,
+              obscureText: obscureText,
+              textAlignVertical: TextAlignVertical.center,
+              enabled: enable,
+              style: appTheme.textTheme.bodyMedium?.copyWith(
+                color: enable
+                    ? appTheme.iconTheme.color
+                    : appTheme.colorScheme.primaryContainer,
               ),
+              onChanged: onChanged,
+              controller: controller,
+              maxLength: maxLength,
+              textCapitalization: textCapitalization,
+              textAlign: textAlignHorizontal,
+              keyboardType: keyboardType,
+              textInputAction: inputAction,
+              onSubmitted: onSubmitted,
+              autofocus: autoFocus,
+              decoration: InputDecoration(
+                hintText: hintText,
+                hintStyle: appTheme.textTheme.bodySmall,
+                prefixIcon: prefixIcon,
+                suffixIcon: suffixIcon,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                ),
+                suffixIconConstraints:
+                    BoxConstraints(maxWidth: 80, maxHeight: 50),
+              ),
+              maxLines: maxLines,
+              focusNode: focusNode,
+              inputFormatters: textInputFormatter,
             ),
           ),
         ],
