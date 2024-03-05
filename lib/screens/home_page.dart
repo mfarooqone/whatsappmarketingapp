@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:whatsappmarketingapp/controllers/send_message_controller.dart';
+import 'package:whatsappmarketingapp/widgets/loader_indicator.dart';
 
 import 'view_all_contacts.dart';
 
-class SendMessageScreen extends StatefulWidget {
-  const SendMessageScreen({Key? key}) : super(key: key);
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
 
   @override
-  State<SendMessageScreen> createState() => _SendMessageScreenState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _SendMessageScreenState extends State<SendMessageScreen> {
+class _HomePageState extends State<HomePage> {
   final SendMessageController sendMessageController =
       Get.put(SendMessageController());
 
   @override
   void initState() {
     super.initState();
-
     sendMessageController.getPermission();
   }
 
@@ -26,12 +26,15 @@ class _SendMessageScreenState extends State<SendMessageScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Send WhatsApp Message'),
+        title: const Text('Desire Sol'),
         centerTitle: true,
+        elevation: 1,
       ),
       body: Obx(() {
         return sendMessageController.isLoading.value
-            ? const CircularProgressIndicator()
+            ? const Center(
+                child: LoaderIndicator(),
+              )
             : Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -41,8 +44,16 @@ class _SendMessageScreenState extends State<SendMessageScreen> {
                       onTap: () {
                         Get.to(() => const ViewAllContacts());
                       },
-                      title: const Text('Title'),
-                      subtitle: const Text('Subitile'),
+                      title: Text(
+                        sendMessageController.selectedContacts.isNotEmpty
+                            ? "Selected: ${sendMessageController.selectedContacts.length}"
+                            : 'Select Contacts',
+                      ),
+                      subtitle: Text(
+                        sendMessageController.selectedContacts.isNotEmpty
+                            ? "Total Contacts: ${sendMessageController.allContacts.length}"
+                            : '',
+                      ),
                       leading: const Icon(Icons.person),
                       trailing: const Icon(Icons.arrow_right_sharp),
                     ),
