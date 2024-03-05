@@ -22,8 +22,8 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void fetchAllContacts() async {
-    await sendMessageController.getPermission();
-    sendMessageController.isLoading.value = false;
+    // await sendMessageController.getPermission();
+    await sendMessageController.fetchContacts();
   }
 
   @override

@@ -32,6 +32,7 @@ class SendMessageController extends GetxController {
 
   String sendingTo = "";
   RxBool stopLoop = false.obs;
+  RxInt selectedGroupIndex = 0.obs;
 
   Future<void> getPermission() async {
     isLoading.value = true;
@@ -140,8 +141,11 @@ class SendMessageController extends GetxController {
 
   Future<void> fetchContacts() async {
     isLoading.value = true;
+    print("fetchContacts");
     allContacts.clear();
+    print("allContacts before= $allContacts");
     allContacts = await ContactsService.getContacts();
+    print("allContacts after= $allContacts");
     isLoading.value = false;
   }
 
