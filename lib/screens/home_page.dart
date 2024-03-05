@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:whatsappmarketingapp/controllers/send_message_controller.dart';
 import 'package:whatsappmarketingapp/widgets/loader_indicator.dart';
+import 'package:whatsappmarketingapp/widgets/primary_text_field.dart';
 
 import 'view_all_contacts.dart';
 
@@ -15,6 +16,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final SendMessageController sendMessageController =
       Get.put(SendMessageController());
+  final TextEditingController textController = Get.put(TextEditingController());
 
   @override
   void initState() {
@@ -53,8 +55,29 @@ class _HomePageState extends State<HomePage> {
                       trailing: const Icon(Icons.arrow_right_sharp),
                     ),
                     const SizedBox(height: 20),
+
+                    ////
+                    ///
+                    ///
+                    PrimaryTextField(
+                      controller: textController,
+                      label: "Message",
+                      hintText: "Write a message here",
+                      mandatory: true,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: 10,
+                    ),
+
+                    ///
+                    ///
+                    ///
                     Text("sendingTo == ${sendMessageController.sendingTo}"),
                     const SizedBox(height: 20),
+
+                    ///
+                    ///
+                    ///
+
                     ElevatedButton(
                       onPressed: () {
                         if (sendMessageController.stopLoop.value == false) {
