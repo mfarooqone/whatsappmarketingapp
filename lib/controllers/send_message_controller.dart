@@ -73,6 +73,8 @@ class SendMessageController extends GetxController {
     allPhoneNumbers.clear();
     allContacts = await ContactsService.getContacts();
 
+    Set<String> uniquePhoneNumbers = <String>{};
+
     for (var contact in allContacts) {
       for (var phone in contact.phones ?? []) {
         if (phone.value != null && phone.value!.isNotEmpty) {
@@ -84,13 +86,13 @@ class SendMessageController extends GetxController {
           if (cleanedPhone.startsWith('0')) {
             cleanedPhone = '92${cleanedPhone.substring(1)}';
           }
-
           if (cleanedPhone.length == 12) {
-            allPhoneNumbers.add(cleanedPhone);
+            uniquePhoneNumbers.add(cleanedPhone);
           }
         }
       }
     }
+    allPhoneNumbers = uniquePhoneNumbers.toList();
   }
 
   ///
