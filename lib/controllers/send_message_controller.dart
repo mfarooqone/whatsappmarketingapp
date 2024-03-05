@@ -12,11 +12,15 @@ class SendMessageController extends GetxController {
   List<String> selectedContacts = [];
 
   ///
-  List<String> allPhoneNumbers = [
-    "923036991118",
-    "923106778026",
-  ];
-  // List<String> allPhoneNumbers = [];
+  // List<String> allPhoneNumbers = [
+  //   "923036991118",
+  //   "923106778026",
+  //   "923036991118",
+  //   "923106778026",
+  //   "923036991118",
+  //   "923106778026",
+  // ];
+  List<String> allPhoneNumbers = [];
 
   List<Contact> allContacts = [];
 
@@ -30,37 +34,40 @@ class SendMessageController extends GetxController {
   RxBool stopLoop = false.obs;
 
   Future<void> getPermission() async {
+    isLoading.value = true;
     var status = await Permission.contacts.request();
     if (status.isGranted) {
       fetchContacts();
     } else if (status.isDenied) {
+      status = await Permission.contacts.request();
     } else if (status.isPermanentlyDenied) {
       openAppSettings();
     }
+    isLoading.value = false;
   }
 
   Future<void> startLoop({required String message}) async {
-    // Set<String> uniquePhoneNumbers = <String>{};
-    // allPhoneNumbers.clear();
-    // uniquePhoneNumbers.clear();
+    Set<String> uniquePhoneNumbers = <String>{};
+    allPhoneNumbers.clear();
+    uniquePhoneNumbers.clear();
 
-    // for (int i = 0; i < selectedContacts.length; i++) {
-    //   if (selectedContacts.isNotEmpty) {
-    //     String cleanedPhone = selectedContacts[i];
-    //     cleanedPhone = cleanedPhone.replaceAll(' ', '');
-    //     if (cleanedPhone.startsWith('+')) {
-    //       cleanedPhone = cleanedPhone.substring(1);
-    //     }
-    //     if (cleanedPhone.startsWith('0')) {
-    //       cleanedPhone = '92${cleanedPhone.substring(1)}';
-    //     }
-    //     if (cleanedPhone.length == 12) {
-    //       uniquePhoneNumbers.add(cleanedPhone);
-    //     }
-    //   }
-    // }
-    // allPhoneNumbers = uniquePhoneNumbers.toList();
-    // print("phonenumbers == $allPhoneNumbers ");
+    for (int i = 0; i < selectedContacts.length; i++) {
+      if (selectedContacts.isNotEmpty) {
+        String cleanedPhone = selectedContacts[i];
+        cleanedPhone = cleanedPhone.replaceAll(' ', '');
+        if (cleanedPhone.startsWith('+')) {
+          cleanedPhone = cleanedPhone.substring(1);
+        }
+        if (cleanedPhone.startsWith('0')) {
+          cleanedPhone = '92${cleanedPhone.substring(1)}';
+        }
+        if (cleanedPhone.length == 12) {
+          uniquePhoneNumbers.add(cleanedPhone);
+        }
+      }
+    }
+    allPhoneNumbers = uniquePhoneNumbers.toList();
+    print("phonenumbers == $allPhoneNumbers ");
 
     ///
     ///
@@ -72,14 +79,13 @@ class SendMessageController extends GetxController {
       stopLoop.value = true;
 
       for (int i = 0; i < allPhoneNumbers.length; i++) {
-        await Future.delayed(const Duration(seconds: 5));
-
+        sendingTo = allPhoneNumbers[i];
+        isLoading.value = true;
+        isLoading.value = false;
+        await Future.delayed(const Duration(seconds: 15));
         if (stopLoop.value) {
           ///
-          log("message to == ${[allPhoneNumbers[i]]}");
-
-          ///
-          sendingTo = allPhoneNumbers[i];
+          log("Number: ${[allPhoneNumbers[i]]} Message: $message");
 
           ///
           sendMessage(

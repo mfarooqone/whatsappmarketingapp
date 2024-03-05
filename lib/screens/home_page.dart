@@ -117,7 +117,7 @@ class _HomePageState extends State<HomePage> {
   ///
   ///
   bool validate() {
-    if (sendMessageController.allPhoneNumbers.isEmpty) {
+    if (sendMessageController.selectedContacts.isEmpty) {
       showErrorMessage(context, "Please select atleast one contact");
       return false;
     } else if (textController.text.isEmpty) {
