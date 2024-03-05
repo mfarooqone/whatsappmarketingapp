@@ -78,31 +78,30 @@ class SendMessageController extends GetxController {
     if (!stopLoop.value) {
       stopLoop.value = true;
 
-      for (int i = 0; i < allPhoneNumbers.length; i++) {
-        sendingTo = allPhoneNumbers[i];
-        isLoading.value = true;
-        isLoading.value = false;
-        await Future.delayed(const Duration(seconds: 15));
-        if (stopLoop.value) {
-          ///
-          log("Number: ${[allPhoneNumbers[i]]} Message: $message");
+      int startIndex = 0;
+      int endIndex = allPhoneNumbers.length > 4 ? 4 : allPhoneNumbers.length;
 
-          ///
-          sendMessage(
-            phoneNumber: [allPhoneNumbers[i]],
-            message: message,
-          );
-
-          ///
-          if (i == allPhoneNumbers.length - 1) {
-            stopTheLoop();
-            log("stop loop because reached the last contact");
-            update();
+      while (startIndex < allPhoneNumbers.length) {
+        for (int i = startIndex; i < endIndex; i++) {
+          if (stopLoop.value) {
+            log("Number: ${allPhoneNumbers[i]} Message: $message");
+            sendMessage(phoneNumber: allPhoneNumbers[i], message: message);
+          } else {
+            return;
           }
-        } else {
-          break;
+        }
+        await Future.delayed(Duration(seconds: 30));
+        startIndex = endIndex;
+        endIndex = startIndex + 4;
+        if (endIndex > allPhoneNumbers.length) {
+          endIndex = allPhoneNumbers.length;
         }
       }
+
+      // If all messages sent
+      stopTheLoop();
+      log("All messages sent");
+      update();
     }
     isLoading.value = false;
   }
@@ -112,6 +111,32 @@ class SendMessageController extends GetxController {
     log("stop loop");
     isLoading.value = false;
   }
+
+  // for (int i = 0; i < allPhoneNumbers.length; i++) {
+  //   sendingTo = allPhoneNumbers[i];
+  //   isLoading.value = true;
+  //   isLoading.value = false;
+  //   await Future.delayed(const Duration(seconds: 15));
+  //   if (stopLoop.value) {
+  //     ///
+  //     log("Number: ${[allPhoneNumbers[i]]} Message: $message");
+
+  //     ///
+  //     sendMessage(
+  //       phoneNumber: [allPhoneNumbers[i]],
+  //       message: message,
+  //     );
+
+  //     ///
+  //     if (i == allPhoneNumbers.length - 1) {
+  //       stopTheLoop();
+  //       log("stop loop because reached the last contact");
+  //       update();
+  //     }
+  //   } else {
+  //     break;
+  //   }
+  // }
 
   Future<void> fetchContacts() async {
     isLoading.value = true;
@@ -124,7 +149,7 @@ class SendMessageController extends GetxController {
   ///
   ///
   Future<void> sendMessage({
-    required List<String> phoneNumber,
+    required String phoneNumber,
     required String message,
   }) async {
     final url = Uri.parse('http://66.42.49.235/send-message');
@@ -135,7 +160,7 @@ class SendMessageController extends GetxController {
         url,
         headers: headers,
         body: jsonEncode({
-          'phoneNumbers': phoneNumber,
+          'phoneNumbers': [phoneNumber],
           'message': message,
         }),
       );
