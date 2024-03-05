@@ -45,14 +45,10 @@ class _HomePageState extends State<HomePage> {
                       },
                       title: Text(
                         sendMessageController.selectedContacts.isNotEmpty
-                            ? "Selected: ${sendMessageController.selectedContacts.length}"
+                            ? "Selected Contacts: ${sendMessageController.selectedContacts.length}"
                             : 'Select Contacts',
                       ),
-                      subtitle: Text(
-                        sendMessageController.selectedContacts.isNotEmpty
-                            ? "Total Contacts: ${sendMessageController.allContacts.length}"
-                            : '',
-                      ),
+                      tileColor: Colors.grey[100],
                       leading: const Icon(Icons.person),
                       trailing: const Icon(Icons.arrow_right_sharp),
                     ),

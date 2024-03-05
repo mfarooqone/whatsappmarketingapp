@@ -12,11 +12,11 @@ class SendMessageController extends GetxController {
   List<String> selectedContacts = [];
 
   ///
-  // List<String> allPhoneNumbers = [
-  //   "923036991118",
-  //   "923106778026",
-  // ];
-  List<String> allPhoneNumbers = [];
+  List<String> allPhoneNumbers = [
+    "923036991118",
+    "923106778026",
+  ];
+  // List<String> allPhoneNumbers = [];
 
   List<Contact> allContacts = [];
 
@@ -40,54 +40,54 @@ class SendMessageController extends GetxController {
   }
 
   Future<void> startLoop() async {
-    Set<String> uniquePhoneNumbers = <String>{};
-    allPhoneNumbers.clear();
-    uniquePhoneNumbers.clear();
+    // Set<String> uniquePhoneNumbers = <String>{};
+    // allPhoneNumbers.clear();
+    // uniquePhoneNumbers.clear();
 
-    for (int i = 0; i < selectedContacts.length; i++) {
-      if (selectedContacts.isNotEmpty) {
-        String cleanedPhone = selectedContacts[i];
-        cleanedPhone = cleanedPhone.replaceAll(' ', '');
-        if (cleanedPhone.startsWith('+')) {
-          cleanedPhone = cleanedPhone.substring(1);
-        }
-        if (cleanedPhone.startsWith('0')) {
-          cleanedPhone = '92${cleanedPhone.substring(1)}';
-        }
-        if (cleanedPhone.length == 12) {
-          uniquePhoneNumbers.add(cleanedPhone);
-        }
-      }
-    }
-    allPhoneNumbers = uniquePhoneNumbers.toList();
-    print("phonenumbers == $allPhoneNumbers ");
-
-    ///
-    ///
-    ///
-    ///
-
-    // log("start loop");
-    // if (!stopLoop.value) {
-    //   stopLoop.value = true;
-
-    //   for (int i = 0; i < allPhoneNumbers.length; i++) {
-    //     await Future.delayed(const Duration(seconds: 5));
-
-    //     if (stopLoop.value) {
-    //       log("message to == ${[allPhoneNumbers[i]]}");
-    //       sendingTo = allPhoneNumbers[i];
-    //       sendMessage(phoneNumber: [allPhoneNumbers[i]]);
-    //       if (i == allPhoneNumbers.length - 1) {
-    //         stopTheLoop();
-    //         log("stop loop because reached the last contact");
-    //         update();
-    //       }
-    //     } else {
-    //       break;
+    // for (int i = 0; i < selectedContacts.length; i++) {
+    //   if (selectedContacts.isNotEmpty) {
+    //     String cleanedPhone = selectedContacts[i];
+    //     cleanedPhone = cleanedPhone.replaceAll(' ', '');
+    //     if (cleanedPhone.startsWith('+')) {
+    //       cleanedPhone = cleanedPhone.substring(1);
+    //     }
+    //     if (cleanedPhone.startsWith('0')) {
+    //       cleanedPhone = '92${cleanedPhone.substring(1)}';
+    //     }
+    //     if (cleanedPhone.length == 12) {
+    //       uniquePhoneNumbers.add(cleanedPhone);
     //     }
     //   }
     // }
+    // allPhoneNumbers = uniquePhoneNumbers.toList();
+    // print("phonenumbers == $allPhoneNumbers ");
+
+    ///
+    ///
+    ///
+    ///
+
+    log("start loop");
+    if (!stopLoop.value) {
+      stopLoop.value = true;
+
+      for (int i = 0; i < allPhoneNumbers.length; i++) {
+        await Future.delayed(const Duration(seconds: 5));
+
+        if (stopLoop.value) {
+          log("message to == ${[allPhoneNumbers[i]]}");
+          sendingTo = allPhoneNumbers[i];
+          sendMessage(phoneNumber: [allPhoneNumbers[i]]);
+          if (i == allPhoneNumbers.length - 1) {
+            stopTheLoop();
+            log("stop loop because reached the last contact");
+            update();
+          }
+        } else {
+          break;
+        }
+      }
+    }
     isLoading.value = false;
   }
 
