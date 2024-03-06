@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:whatsappmarketingapp/controllers/send_message_controller.dart';
 import 'package:whatsappmarketingapp/screens/home_page.dart';
 import 'package:whatsappmarketingapp/widgets/loader_indicator.dart';
@@ -17,13 +18,34 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
-    fetchAllContacts();
     super.initState();
+    if (!sendMessageController.contactsLoaded.value &&
+        !sendMessageController.contactsChecked.value) {
+      checkContactsLocally();
+    }
   }
 
   void fetchAllContacts() async {
-    // await sendMessageController.getPermission();
-    await sendMessageController.fetchContacts();
+    print("fetchAllContacts");
+    await sendMessageController.getPermission();
+  }
+
+  Future<void> checkContactsLocally() async {
+    sendMessageController.isLoading.value = true;
+    print("checkContactsLocally");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool contactsExist = prefs.containsKey('contacts');
+    if (!contactsExist) {
+      print("if fetchAllContacts");
+      fetchAllContacts();
+    } else {
+      print("else loadContactsLocally");
+      sendMessageController.loadContactsLocally();
+      sendMessageController.contactsLoaded.value = true;
+    }
+    sendMessageController.contactsChecked.value = true;
+
+    sendMessageController.isLoading.value = false;
   }
 
   @override

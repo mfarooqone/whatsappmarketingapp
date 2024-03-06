@@ -11,6 +11,8 @@ import 'package:whatsappmarketingapp/model/contacts_model.dart';
 class SendMessageController extends GetxController {
   RxBool isLoading = false.obs;
   RxBool isAllSelected = false.obs;
+  RxBool contactsLoaded = false.obs;
+  RxBool contactsChecked = false.obs;
   List<String> selectedContacts = [];
 
   ///
@@ -40,13 +42,15 @@ class SendMessageController extends GetxController {
     isLoading.value = true;
     var status = await Permission.contacts.request();
     if (status.isGranted) {
-      fetchContacts();
+      await fetchContacts();
+      isLoading.value = false;
     } else if (status.isDenied) {
       status = await Permission.contacts.request();
+      isLoading.value = false;
     } else if (status.isPermanentlyDenied) {
       openAppSettings();
+      isLoading.value = false;
     }
-    isLoading.value = false;
   }
 
   Future<void> startLoop({required String message}) async {
