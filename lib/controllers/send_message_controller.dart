@@ -85,7 +85,6 @@ class SendMessageController extends GetxController {
       while (startIndex < allPhoneNumbers.length) {
         for (int i = startIndex; i < endIndex; i++) {
           await Future.delayed(const Duration(seconds: 10));
-
           if (stopLoop.value) {
             log("Number: ${allPhoneNumbers[i]} Message: $message");
             sendMessage(phoneNumber: allPhoneNumbers[i], message: message);
