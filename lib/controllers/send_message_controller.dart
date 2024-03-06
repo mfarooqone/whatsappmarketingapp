@@ -5,6 +5,8 @@ import 'package:contacts_service/contacts_service.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:whatsappmarketingapp/model/contacts_model.dart';
 
 class SendMessageController extends GetxController {
   RxBool isLoading = false.obs;
@@ -114,40 +116,63 @@ class SendMessageController extends GetxController {
     isLoading.value = false;
   }
 
-  // for (int i = 0; i < allPhoneNumbers.length; i++) {
-  //   sendingTo = allPhoneNumbers[i];
-  //   isLoading.value = true;
-  //   isLoading.value = false;
-  //   await Future.delayed(const Duration(seconds: 15));
-  //   if (stopLoop.value) {
-  //     ///
-  //     log("Number: ${[allPhoneNumbers[i]]} Message: $message");
-
-  //     ///
-  //     sendMessage(
-  //       phoneNumber: [allPhoneNumbers[i]],
-  //       message: message,
-  //     );
-
-  //     ///
-  //     if (i == allPhoneNumbers.length - 1) {
-  //       stopTheLoop();
-  //       log("stop loop because reached the last contact");
-  //       update();
-  //     }
-  //   } else {
-  //     break;
-  //   }
-  // }
-
   Future<void> fetchContacts() async {
-    isLoading.value = true;
-    print("fetchContacts");
-    allContacts.clear();
-    print("allContacts before= $allContacts");
-    allContacts = await ContactsService.getContacts();
-    print("allContacts after= $allContacts");
-    isLoading.value = false;
+    try {
+      isLoading.value = true;
+      print("fetching contacts");
+      allContacts.clear();
+      allContacts = await ContactsService.getContacts();
+      await saveContactsLocally(allContacts);
+      isLoading.value = false;
+    } catch (e) {
+      print('Error fetching contacts: $e');
+    }
+  }
+
+  Future<void> saveContactsLocally(List<Contact> contacts) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> contactsJson = contacts.map((contact) {
+      List<String> phoneNumbers = [
+        for (var item in contact.phones ?? [])
+          if (item.value != null) item.value!
+      ];
+      return json.encode(ContactModel(
+        displayName: contact.displayName,
+        phones: phoneNumbers,
+      ).toJson());
+    }).toList();
+    await prefs.setStringList('contacts', contactsJson);
+  }
+
+  ///
+  ///
+  ///
+  ///
+
+  Future<void> loadContactsLocally() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? contactsJson = prefs.getStringList('contacts');
+    if (contactsJson != null) {
+      List<ContactModel> contacts = contactsJson
+          .map((json) => ContactModel.fromJson(jsonDecode(json)))
+          .toList();
+      List<Contact> convertedContacts = contacts.map((contactModel) {
+        return Contact(
+          displayName: contactModel.displayName,
+          phones: contactModel.phones
+              ?.map((phoneNumber) => Item(label: "", value: phoneNumber))
+              .toList(),
+        );
+      }).toList();
+
+      allContacts = convertedContacts;
+      isLoading.value = true;
+      isLoading.value = false;
+    } else {
+      allContacts = [];
+      isLoading.value = true;
+      isLoading.value = false;
+    }
   }
 
   ///
